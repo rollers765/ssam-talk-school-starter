@@ -15,7 +15,7 @@
 
 ## 2. 템플릿 복제와 Codex 열기
 
-원본 저장소가 GitHub Template으로 공개된 후 `Use this template`에서 새 저장소를 만듭니다. 학교 저장소는 비공개를 권장합니다. 원본 제작자의 저장소나 운영 프로젝트를 수정하는 방식이 아닙니다.
+[공식 Starter 저장소](https://github.com/rollers765/ssam-talk-school-starter)의 `Use this template`에서 새 저장소를 만듭니다. 학교 저장소는 비공개를 권장합니다. 원본 제작자의 저장소나 운영 프로젝트를 수정하는 방식이 아닙니다. 복제본에도 MIT 저작권·라이선스 표시를 유지하세요.
 
 새 저장소를 컴퓨터에 복제하고 그 폴더를 Codex 작업 폴더로 엽니다. [CODEX-PROMPT.md](CODEX-PROMPT.md)의 문장을 보냅니다.
 
