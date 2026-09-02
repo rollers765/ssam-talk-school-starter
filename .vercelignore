@@ -1,0 +1,12 @@
+.git
+.env*
+*.private.json
+*firebase-adminsdk*.json
+service-account*.json
+credentials*.json
+work
+.setup-state.json
+firestore.rules
+.firestore.test.rules
+.firebase.test.json
+.firebase

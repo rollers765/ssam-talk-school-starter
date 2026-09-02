@@ -1,0 +1,198 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function admin() {
+      return signedIn()
+        && request.auth.token.email is string
+        && request.auth.token.email == '__ADMIN_EMAIL__';
+    }
+
+    function teacherAccount() {
+      return signedIn()
+        && (request.auth.token.role == 'teacher' || admin());
+    }
+
+    function activeStudent() {
+      return signedIn()
+        && request.auth.token.role == 'student'
+        && request.auth.token.sessionVersion is int
+        && exists(/databases/$(database)/documents/studentSessions/$(request.auth.uid))
+        && get(/databases/$(database)/documents/studentSessions/$(request.auth.uid)).data.version == request.auth.token.sessionVersion;
+    }
+
+    function teacherIsApproved(teacherId) {
+      return exists(/databases/$(database)/documents/teachers/$(teacherId))
+        && get(/databases/$(database)/documents/teachers/$(teacherId)).data.status == 'approved';
+    }
+
+    function approvedTeacher(teacherId) {
+      return teacherAccount()
+        && request.auth.uid == teacherId
+        && teacherIsApproved(teacherId);
+    }
+
+    function ownTeacherData(data) {
+      return approvedTeacher(request.auth.uid) && data.teacherId == request.auth.uid;
+    }
+
+    function requestReleasesSlotLock(slotId, data) {
+      return existsAfter(/databases/$(database)/documents/requests/$(data.requestId))
+        && getAfter(/databases/$(database)/documents/requests/$(data.requestId)).data.teacherId == data.teacherId
+        && (
+          getAfter(/databases/$(database)/documents/requests/$(data.requestId)).data.status in [
+            'cancelled', 'deferred', 'completed'
+          ]
+          || getAfter(/databases/$(database)/documents/requests/$(data.requestId)).data.slotId != slotId
+        );
+    }
+
+    match /users/{userId} {
+      allow read: if admin() || (request.auth.uid == userId && (teacherAccount() || activeStudent()));
+      allow create: if admin()
+        && request.auth.uid == userId
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role == 'teacher';
+      allow update: if admin()
+        && request.auth.uid == userId
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == 'teacher'
+        && resource.data.role == 'teacher';
+    }
+
+    // 교사 신청은 신청자 본인과 관리자만 볼 수 있습니다.
+    match /teacherApplications/{teacherId} {
+      allow read: if (teacherAccount() && request.auth.uid == teacherId) || admin();
+      allow create: if admin()
+        && request.auth.uid == teacherId
+        && request.resource.data.email == request.auth.token.email
+        && (
+          request.resource.data.status == 'pending'
+          || (admin() && request.resource.data.status == 'approved')
+        );
+      allow update: if admin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'name', 'department', 'status', 'approvedAt'
+        ]);
+    }
+
+    // 학생에게 공개되는 목록에는 선생님 이름만 저장합니다.
+    match /teachers/{teacherId} {
+      allow read: if admin() || (teacherAccount() && request.auth.uid == teacherId)
+        || (activeStudent() && resource.data.status == 'approved');
+      allow create, update: if admin()
+        && request.resource.data.status == 'approved'
+        && request.resource.data.keys().hasOnly(['name', 'department', 'status']);
+    }
+
+    match /requests/{requestId} {
+      allow read: if (activeStudent() && resource.data.userId == request.auth.uid)
+        || ownTeacherData(resource.data);
+      allow create: if activeStudent()
+        && request.resource.data.userId == request.auth.uid
+        && !('studentEmail' in request.resource.data)
+        && request.resource.data.status == 'pending'
+        && request.resource.data.studentName == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.name
+        && request.resource.data.studentNumber == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.studentNumber
+        && teacherIsApproved(request.resource.data.teacherId)
+        && request.resource.data.teacherName == get(/databases/$(database)/documents/teachers/$(request.resource.data.teacherId)).data.name;
+      allow update: if request.resource.data.userId == resource.data.userId
+        && request.resource.data.teacherId == resource.data.teacherId
+        && (
+          ownTeacherData(resource.data)
+          || (
+            activeStudent()
+            && resource.data.userId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'status', 'updatedAt', 'expiresAt', 'date', 'start', 'slotId', 'teacherNote'
+            ])
+            && (
+              request.resource.data.status == 'cancelled'
+              || (resource.data.status == 'proposed' && request.resource.data.status in ['confirmed', 'pending'])
+            )
+          )
+        );
+      allow delete: if false;
+    }
+
+    match /slotLocks/{slotId} {
+      // 학생은 빈 예약칸도 먼저 읽어야 트랜잭션으로 중복 예약을 막을 수 있습니다.
+      // 잠금 문서에는 상담 내용이나 학생 개인정보가 없습니다.
+      allow read: if activeStudent() || ownTeacherData(resource.data);
+      allow create: if (
+          ownTeacherData(request.resource.data)
+         ) || (
+           activeStudent()
+           && request.resource.data.keys().hasOnly([
+             'requestId', 'teacherId', 'slotId', 'status', 'date', 'start', 'updatedAt'
+           ])
+           && request.resource.data.status == 'pending'
+           && slotId == request.resource.data.teacherId + '__' + request.resource.data.slotId
+           && getAfter(/databases/$(database)/documents/requests/$(request.resource.data.requestId)).data.userId == request.auth.uid
+           && getAfter(/databases/$(database)/documents/requests/$(request.resource.data.requestId)).data.teacherId == request.resource.data.teacherId
+           && getAfter(/databases/$(database)/documents/requests/$(request.resource.data.requestId)).data.slotId == slotId
+           && getAfter(/databases/$(database)/documents/requests/$(request.resource.data.requestId)).data.status == 'pending'
+           && getAfter(/databases/$(database)/documents/requests/$(request.resource.data.requestId)).data.date == request.resource.data.date
+           && getAfter(/databases/$(database)/documents/requests/$(request.resource.data.requestId)).data.start == request.resource.data.start
+         );
+       allow update: if request.resource.data.teacherId == resource.data.teacherId
+         && (
+            ownTeacherData(resource.data)
+           || (
+             activeStudent()
+             && request.resource.data.requestId == resource.data.requestId
+             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+             && request.resource.data.status == 'confirmed'
+             && get(/databases/$(database)/documents/requests/$(resource.data.requestId)).data.userId == request.auth.uid
+             && get(/databases/$(database)/documents/requests/$(resource.data.requestId)).data.status == 'confirmed'
+           )
+         );
+      allow delete: if requestReleasesSlotLock(slotId, resource.data)
+        && (
+          ownTeacherData(resource.data)
+          || (
+            activeStudent()
+            && getAfter(/databases/$(database)/documents/requests/$(resource.data.requestId)).data.userId == request.auth.uid
+          )
+        );
+    }
+
+    match /slotOverrides/{slotId} {
+      allow read: if ownTeacherData(resource.data)
+        || (activeStudent() && teacherIsApproved(resource.data.teacherId));
+      allow create: if ownTeacherData(request.resource.data);
+      allow update: if teacherAccount()
+        && request.resource.data.teacherId == resource.data.teacherId
+        && ownTeacherData(resource.data);
+      allow delete: if ownTeacherData(resource.data);
+    }
+
+    match /schedules/{scheduleId} {
+      allow read: if ownTeacherData(resource.data);
+      allow create: if ownTeacherData(request.resource.data);
+      allow update: if teacherAccount()
+        && request.resource.data.teacherId == resource.data.teacherId
+        && ownTeacherData(resource.data);
+      allow delete: if ownTeacherData(resource.data);
+    }
+
+    // 학생에게는 상세 일정 이름을 제외한 바쁜 시간만 공개합니다.
+    match /publicSchedules/{scheduleId} {
+      allow read: if ownTeacherData(resource.data)
+        || (activeStudent() && teacherIsApproved(resource.data.teacherId));
+      allow create: if ownTeacherData(request.resource.data)
+        && request.resource.data.keys().hasOnly([
+          'teacherId', 'date', 'weekday', 'start', 'end', 'publicTitle', 'recurring', 'createdAt'
+        ]);
+      allow update: if teacherAccount()
+        && request.resource.data.teacherId == resource.data.teacherId
+        && ownTeacherData(resource.data);
+      allow delete: if ownTeacherData(resource.data);
+    }
+
+    // PIN 자격 증명은 서버 전용이며 클라이언트 접근을 허용하지 않습니다.
+  }
+}

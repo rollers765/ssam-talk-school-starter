@@ -1,0 +1,328 @@
+{
+  "school": {
+    "name": "우리 고등학교",
+    "shortName": "우리학교",
+    "logoPath": "/school-logo.svg"
+  },
+  "student": {
+    "numberLabel": "학번",
+    "numberLength": 5,
+    "numberExample": "10312"
+  },
+  "consultation": {
+    "weeksAvailable": 4,
+    "topics": [
+      "진로에 대해",
+      "친구에 대해",
+      "성적에 대해",
+      "취업에 대해",
+      "여러 가지 이야기",
+      "모르겠어요"
+    ],
+    "weeklySchedule": {
+      "monday": [
+        {
+          "start": "08:10",
+          "end": "08:20",
+          "label": "조회 끝나고 잠깐",
+          "type": "break"
+        },
+        {
+          "start": "09:10",
+          "end": "09:20",
+          "label": "1교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "10:10",
+          "end": "10:20",
+          "label": "2교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "11:10",
+          "end": "11:20",
+          "label": "3교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "12:10",
+          "end": "12:30",
+          "label": "점심시간 앞부분",
+          "type": "lunch"
+        },
+        {
+          "start": "12:30",
+          "end": "12:50",
+          "label": "점심시간 뒷부분",
+          "type": "lunch"
+        },
+        {
+          "start": "13:50",
+          "end": "14:00",
+          "label": "5교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "14:50",
+          "end": "15:00",
+          "label": "6교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "15:50",
+          "end": "16:10",
+          "label": "방과 후 바로",
+          "type": "after"
+        },
+        {
+          "start": "16:10",
+          "end": "16:30",
+          "label": "방과 후 20분 뒤",
+          "type": "after"
+        }
+      ],
+      "tuesday": [
+        {
+          "start": "08:10",
+          "end": "08:20",
+          "label": "조회 끝나고 잠깐",
+          "type": "break"
+        },
+        {
+          "start": "09:10",
+          "end": "09:20",
+          "label": "1교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "10:10",
+          "end": "10:20",
+          "label": "2교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "11:10",
+          "end": "11:20",
+          "label": "3교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "12:10",
+          "end": "12:30",
+          "label": "점심시간 앞부분",
+          "type": "lunch"
+        },
+        {
+          "start": "12:30",
+          "end": "12:50",
+          "label": "점심시간 뒷부분",
+          "type": "lunch"
+        },
+        {
+          "start": "13:50",
+          "end": "14:00",
+          "label": "5교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "14:50",
+          "end": "15:10",
+          "label": "방과 후 바로",
+          "type": "after"
+        },
+        {
+          "start": "15:10",
+          "end": "15:30",
+          "label": "방과 후 20분 뒤",
+          "type": "after"
+        }
+      ],
+      "wednesday": [
+        {
+          "start": "08:10",
+          "end": "08:20",
+          "label": "조회 끝나고 잠깐",
+          "type": "break"
+        },
+        {
+          "start": "09:10",
+          "end": "09:20",
+          "label": "1교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "10:10",
+          "end": "10:20",
+          "label": "2교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "11:10",
+          "end": "11:20",
+          "label": "3교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "12:10",
+          "end": "12:30",
+          "label": "점심시간 앞부분",
+          "type": "lunch"
+        },
+        {
+          "start": "12:30",
+          "end": "12:50",
+          "label": "점심시간 뒷부분",
+          "type": "lunch"
+        },
+        {
+          "start": "13:50",
+          "end": "14:00",
+          "label": "5교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "14:50",
+          "end": "15:00",
+          "label": "6교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "15:50",
+          "end": "16:10",
+          "label": "방과 후 바로",
+          "type": "after"
+        },
+        {
+          "start": "16:10",
+          "end": "16:30",
+          "label": "방과 후 20분 뒤",
+          "type": "after"
+        }
+      ],
+      "thursday": [
+        {
+          "start": "08:10",
+          "end": "08:20",
+          "label": "조회 끝나고 잠깐",
+          "type": "break"
+        },
+        {
+          "start": "09:10",
+          "end": "09:20",
+          "label": "1교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "10:10",
+          "end": "10:20",
+          "label": "2교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "11:10",
+          "end": "11:20",
+          "label": "3교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "12:10",
+          "end": "12:30",
+          "label": "점심시간 앞부분",
+          "type": "lunch"
+        },
+        {
+          "start": "12:30",
+          "end": "12:50",
+          "label": "점심시간 뒷부분",
+          "type": "lunch"
+        },
+        {
+          "start": "13:50",
+          "end": "14:00",
+          "label": "5교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "14:50",
+          "end": "15:00",
+          "label": "6교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "15:50",
+          "end": "16:10",
+          "label": "방과 후 바로",
+          "type": "after"
+        },
+        {
+          "start": "16:10",
+          "end": "16:30",
+          "label": "방과 후 20분 뒤",
+          "type": "after"
+        }
+      ],
+      "friday": [
+        {
+          "start": "08:10",
+          "end": "08:20",
+          "label": "조회 끝나고 잠깐",
+          "type": "break"
+        },
+        {
+          "start": "09:10",
+          "end": "09:20",
+          "label": "1교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "10:10",
+          "end": "10:20",
+          "label": "2교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "11:10",
+          "end": "11:20",
+          "label": "3교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "12:10",
+          "end": "12:30",
+          "label": "점심시간 앞부분",
+          "type": "lunch"
+        },
+        {
+          "start": "12:30",
+          "end": "12:50",
+          "label": "점심시간 뒷부분",
+          "type": "lunch"
+        },
+        {
+          "start": "13:50",
+          "end": "14:00",
+          "label": "5교시 끝나고 쉬는 시간",
+          "type": "break"
+        },
+        {
+          "start": "14:50",
+          "end": "15:10",
+          "label": "방과 후 바로",
+          "type": "after"
+        },
+        {
+          "start": "15:10",
+          "end": "15:30",
+          "label": "방과 후 20분 뒤",
+          "type": "after"
+        }
+      ]
+    }
+  },
+  "branding": {
+    "appName": "쌤톡",
+    "tagline": "선생님, 상담 요청해요!",
+    "primaryColor": "#ff7657"
+  }
+}

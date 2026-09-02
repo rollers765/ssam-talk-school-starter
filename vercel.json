@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/__/auth/:path*",
+      "destination": "https://demo-school-starter.firebaseapp.com/__/auth/:path*"
+    },
+    {
+      "source": "/((?!api/|__/auth/).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
